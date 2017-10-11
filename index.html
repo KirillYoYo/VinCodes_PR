@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="format-detection" content="telephone=no">
+	<meta name="MobileOptimized" content="480">
+	<meta name="HandheldFriendly" content="true">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">
+	<title></title>
+</head>
+<script>
+	/*NEED ECMAScript 6!!!!!!!!!!!!!!*/
+</script>
+<style>
+	body, html {
+		margin: 0;
+		padding: 0;
+		height: 100%;
+		background: #838486;
+		font-family: sans-serif;
+	}
+
+	#main {
+		position: relative;
+		min-height: 100%;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+	}
+
+	#main .offline-mode-mess {
+		display: none;
+	}
+
+	#main.offline-mode .offline-mode-mess {
+		display: block;
+		padding: 20px;
+		text-align: center;
+		font-size: 18px;
+	}
+
+	.container {
+		min-width: 480px;
+		padding: 20px;
+		box-sizing: border-box;
+		max-width: 768px;
+		background: #fff;
+	}
+
+	.search-wp {
+		display: flex;
+		flex-direction: row;
+		margin-bottom: 20px;
+	/ / justify-content: center;
+	}
+
+	.search-input {
+		height: 24px;
+		line-height: 24px;
+		box-sizing: border-box;
+	}
+
+	.search-input.err {
+		border-color: #cc1500;
+		outline: none;
+	}
+
+	.send-but {
+		margin-left: 5px;
+		height: 24px;
+		line-height: 24px;
+		padding: 0px 4px;
+		box-sizing: border-box;
+		border: 1px solid #30b316;
+		cursor: pointer;
+		background: #ccc;
+	}
+
+	.send-but.err {
+		opacity: 0.7;
+		cursor: default;
+		position: relative;
+	}
+
+	.send-but:hover {
+		background: #30b316;
+	}
+
+	.send-but.err:hover {
+		background: #ccc;
+	}
+
+	.indicator {
+
+	}
+
+	.indicator .inner {
+		display: none;
+	}
+
+	.indicator.loading-loading .inner {
+		display: block;
+	}
+
+	.indicator.loading-err .outer {
+		opacity: 1;
+		fill: rgba(204, 9, 0, 0.76);
+	}
+
+	.indicator.loading-done .outer{
+		opacity: 1;
+		fill: rgba(2, 204, 31, 0.76);
+	}
+
+	.tbody {
+		max-height: 600px;
+		overflow-y: scroll;
+	}
+
+	.table {
+		padding-top: 30px;
+	}
+
+	.thead {
+		padding: 3px 4px;
+		max-width: 711px;
+		display: flex;
+		flex-direction: row;
+		padding-bottom: 10px;
+	}
+
+	.thead > div {
+		width: 50%;
+		position: relative;
+	}
+
+	.thead .sortVal, .sortVar {
+		cursor: pointer;
+		color: #0072d6;
+		padding: 4px 4px 4px 0px;
+	}
+
+	.thead .sortVal:hover {
+		color: #0085ff;
+	}
+
+	.thead .sortVar:hover {
+		color: #0085ff;
+	}
+
+	.thead .sortVal.active:after {
+		content: '►';
+		position: absolute;
+		left: -16px;
+		font-size: 13px;
+	}
+
+	.thead .sortVar.active:after {
+		content: '►';
+		position: absolute;
+		left: -16px;
+		font-size: 13px;
+	}
+
+	.tbody .row {
+		display: flex;
+		flex-direction: row;
+		padding: 3px 4px;
+		box-sizing: border-box;
+		margin-bottom: 5px;
+	}
+
+	.tbody .row:nth-child(odd) {
+		background: #cccccc;
+	}
+
+	.tbody .row > div {
+		width: 50%;
+	}
+</style>
+<body>
+<div id="main">
+	<div class="container">
+		<div class="offline-mode-mess">Оффлайн режим!</div>
+		<div class="search-wp">
+			<input type="text" class="j_search-input search-input" placeholder="Enter vin-code"/>
+			<button class="j_send-but send-but">Check</button>
+			<div class="indicator loading-not-done">
+				<svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px" height="24px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve">
+				  <path class="outer" opacity="0.2" fill="#000" d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946
+				    s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634
+				    c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z"></path>
+				  <path class="inner" fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0
+				    C22.32,8.481,24.301,9.057,26.013,10.047z" transform="rotate(319.025 20 20)">
+				    <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="0.5s" repeatCount="indefinite"></animateTransform>
+				    </path>
+				  </svg>
+			</div>
+		</div>
+		<div class="div">for test <b>5UXWX7C5*BA</b></div>
+		<div class="table">
+			<div class="thead">
+				<div class="title">
+					<div class="j_sortVar sortVar">Variable</div>
+					<input class="j_input_var" type="text" placeholder="Variable"/>
+				</div>
+				<div class="val">
+					<div class="j_sortVal sortVal">Value</div>
+					<input class="j_input_val" type="text" placeholder="Value"/>
+				</div>
+			</div>
+			<div class="tbody">
+
+			</div>
+		</div>
+	</div>
+</div><!--end main-->
+<!-- JavaScript section  -->
+<script>
+	function bindFunc(el, func, event) {
+		if (document.getElementById(el)) {
+			el = document.getElementById(el)
+			//костыль внизу
+		} else if (document.getElementsByClassName(el)[0]) {
+			el = document.getElementsByClassName(el)[0]
+		} else {
+			console.log('error on find dom-el')
+		}
+		el.addEventListener(event, func);
+	}
+	var s = new XMLSerializer();
+
+	var searchText = null;
+	var isLoading = 'loading_not-done';
+
+	function validate(t) {
+		const valid = new RegExp('^[a-zA-Z0-9]+$');
+		const indxLastChar = t.target.value.length - 1;
+		updateSearchErrors(valid.test(t.target.value[indxLastChar]));
+		setsearchText(t.target.value)
+	}
+	function updateSearchErrors(flag) {
+		var el = document.getElementsByClassName('j_search-input')[0];
+		var el2 = document.getElementsByClassName('j_send-but')[0];
+		if (flag) {
+			removeClass(el, 'err');
+			removeClass(el2, 'err');
+			el2.disabled = false;
+		} else {
+			if (!el.classList.contains('err')) {
+				el.className += " err";
+				el2.className += " err";
+				el2.disabled = true;
+			}
+		}
+	}
+	function setsearchText(str) {
+		searchText = str
+	}
+	function removeClass(obj, cls) {
+		var classes = obj.className.split(' ');
+
+		for (var i = 0; i < classes.length; i++) {
+			if (classes[i] == cls) {
+				classes.splice(i, 1); // удалить класс
+				i--; // (*)
+			}
+		}
+		obj.className = classes.join(' ');
+
+	}
+	function parseRequest(res, isXml) {
+		//isXml - флаг что это xml
+		if (isXml) {
+			if (window.DOMParser) {
+				parser = new DOMParser();
+				xmlDoc = parser.parseFromString(res, "text/xml");
+			}
+			else // Internet Explorer
+			{
+				xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+				xmlDoc.async = false;
+				xmlDoc.loadXML(res);
+			}
+
+			return xmlDoc
+		}
+	}
+
+	function renderLoadingStatus(string) {
+		var el = document.getElementsByClassName('indicator')[0];
+		switch (string) {
+			case 'loading-not-done':
+				//костыль, переделать removeClass чтобы получал массивом имена классов
+				removeClass(el, 'loading-loading');
+				removeClass(el, 'loading-err');
+				removeClass(el, 'loading-done');
+				removeClass(el, 'loading-not-done');
+				el.className += ' loading-not-done';
+				isLoading = 'loading-not-done';
+				break;
+			case 'loading-loading':
+				removeClass(el, 'loading-loading');
+				removeClass(el, 'loading-err');
+				removeClass(el, 'loading-done');
+				removeClass(el, 'loading-not-done');
+				el.className += ' loading-loading';
+				isLoading = 'loading-loading';
+				break;
+			case 'loading-err':
+				removeClass(el, 'loading-loading');
+				removeClass(el, 'loading-err');
+				removeClass(el, 'loading-done');
+				removeClass(el, 'loading-not-done');
+				el.className += ' loading-err';
+				isLoading = 'loading-err';
+				break;
+			case 'loading-done':
+				removeClass(el, 'loading-loading');
+				removeClass(el, 'loading-err');
+				removeClass(el, 'loading-done');
+				removeClass(el, 'loading-not-done');
+				el.className += ' loading-done';
+				isLoading = 'loading-done';
+				break;
+		}
+	}
+	function startRequest() {
+		renderLoadingStatus('loading-loading');
+		var xhr = new XMLHttpRequest();
+		/*5UXWX7C5*BA*/
+		const inStorage = isInStorage('5UXWX7C5');
+		if (inStorage) {
+			parser = new DOMParser();
+			var xmlDoc = parser.parseFromString(Object.values(inStorage), "text/xml");
+			renderTable(xmlDoc.getElementsByTagName('DecodedVINValues')[0].childNodes);
+			renderLoadingStatus('loading-done');
+			return false
+		}
+		xhr.open('GET', 'https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValues/' + searchText + '?format=xml&modelyear=2011', false);
+		xhr.send();
+
+		if (xhr.status != 200) {
+			console.log('Ошибка ' + xhr.status + ': ' + xhr.statusText);
+			setTimeout(function () {
+				renderLoadingStatus('loading-err')
+			}, 200);
+		} else {
+			const xmls = parseRequest(xhr.responseText, true);
+			//const vinParams = xmls.getElementsByTagName('Results')[0].getElementsByTagName('DecodedVINValues')[0].childNodes;
+			const vinParams = xmls.getElementsByTagName('Results')[0].getElementsByTagName('DecodedVINValues')[0];
+			setTimeout(function () {
+				renderLoadingStatus('loading-done')
+			}, 200);
+			const vin = vinParams.childNodes[0].childNodes[0];
+
+
+			var new_item = {};
+			new_item[s.serializeToString(vin)] = s.serializeToString(vinParams);
+			var oldItems = JSON.parse(localStorage.getItem('vinCodes')) || [];
+			oldItems.push(new_item);
+			localStorage.setItem('vinCodes', JSON.stringify(oldItems));
+			renderTable(vinParams.childNodes)
+		}
+	}
+	function isInStorage (val) {
+		var oldItems = JSON.parse(localStorage.getItem('vinCodes')) || [];
+		var end = false;
+		oldItems.map((item, i) => {
+			end = item
+		})
+		return end
+	}
+	var now_render_data = null;
+	function renderTable(obj, notRewriteNowRender) {
+		if (!notRewriteNowRender) {
+			now_render_data = obj
+		}
+		var ren = '';
+		for (let i = 0; i < obj.length; i++) {
+			const nodeName = obj[i].nodeName;
+			var nodeValue = '...';
+			if (obj[i].firstChild) {
+				nodeValue = obj[i].firstChild.nodeValue
+			} else {
+			}
+			ren += "<div class='row'>" + "<div>" + nodeName + "</div>" + "<div>" + nodeValue + "</div>" + "</div>"
+		}
+		document.getElementsByClassName('tbody')[0].innerHTML = ren
+	}
+	function setStorage() {
+		if ("localStorage" in window) {
+			if (!localStorage.getItem('vinCodes')) {
+				localStorage.setItem('vinCodes', 'null')
+			}
+		} else {
+			alert("no localStorage in window");
+		}
+	}
+
+	function sortTable(e) {
+		if (!now_render_data) {
+			return false
+		}
+		if (e.target.classList.contains('j_sortVar') && !e.target.classList.contains('active')) {
+			e.target.className += ' active';
+			removeClass(document.getElementsByClassName('j_sortVal')[0], 'active');
+			renderTable(sortProperties(now_render_data, 'variable'))
+
+		}
+		if (e.target.classList.contains('j_sortVal') && !e.target.classList.contains('active')) {
+			document.getElementsByClassName('j_sortVal')[0].classList += ' active';
+			removeClass(document.getElementsByClassName('j_sortVar')[0], 'active');
+			renderTable(sortProperties(now_render_data, 'value'))
+		}
+	}
+	function sortProperties(obj, type) {
+		var sortable = [];
+		for (var i = 0; i < obj.length; i++) {
+			sortable.push(obj[i])
+		}
+
+		sortable.sort(function (a, b) {
+			var x = a.nodeName;
+			var y = b.nodeName;
+			if (type === 'value') {
+				if (a.firstChild) {
+					x = a.firstChild.nodeValue;
+				} else {
+					x = null
+				}
+				if (b.firstChild) {
+					y = b.firstChild.nodeValue;
+				} else {
+					y = null
+				}
+			}
+
+			return x < y ? -1 : x > y ? 1 : 0;
+		});
+		return sortable;
+	}
+	function filterTable(e) {
+		var filterable = [];
+		if (!now_render_data) {
+			return false
+		}
+		const string = e.target.value.toLowerCase();
+		for (var i = 0; i < now_render_data.length; i++) {
+			/* ECMAScript 6 for this*/
+			if (now_render_data[i].nodeName && (now_render_data[i].nodeName).toLowerCase().includes(string) && e.target.classList.contains('j_input_var')) {
+				filterable.push(now_render_data[i])
+			}
+			if (now_render_data[i].childNodes[0] && (s.serializeToString(now_render_data[i].childNodes[0])).toLowerCase().includes(string) && e.target.classList.contains('j_input_val')) {
+				filterable.push(now_render_data[i])
+			}
+		}
+
+		renderTable(filterable, true);
+		return filterable
+	}
+
+	window.onload = function () {
+		setStorage();
+		bindFunc('j_search-input', validate, 'keyup');
+		bindFunc('j_sortVar', sortTable, 'click');
+		bindFunc('j_sortVal', sortTable, 'click');
+		bindFunc('j_send-but', startRequest, 'click');
+		bindFunc('j_input_val', filterTable, 'keyup');
+		bindFunc('j_input_var', filterTable, 'keyup');
+		//renderLoadingStatus('loading-not-done')
+
+		var xhrTestConnect = new XMLHttpRequest();
+		xhrTestConnect.open("GET", "testConnection.js", true);
+		xhrTestConnect.send();
+
+		xhrTestConnect.onload = function () {
+			removeClass(document.getElementById('main'), 'offline-mode')
+		};
+		xhrTestConnect.onerror = function () {
+			document.getElementById('main').className += " offline-mode"
+		}
+
+//      navigator.onLine - dont work finely at localhost
+//		var online = navigator.onLine;
+//		if (navigator.onLine) {
+//			alert('online')
+//		} else {
+//			alert('offline');
+//		}
+	};
+</script>
+<script src="workerLoader.js"></script>
+</body>
+</html>
